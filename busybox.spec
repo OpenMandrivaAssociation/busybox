@@ -1,7 +1,7 @@
 %define with_uclibc %{?_without_uclibc:0} %{!?_without_uclibc:1}
 
 %ifarch %{sunsparc} x86_64 ppc
-%define with_uclibc 0
+%define with_uclibc 1
 %endif
 
 %define name	busybox
@@ -50,18 +50,17 @@ perl -pi -e "s#-march=i386#-march=i586 -mtune=pentiumpro#g" Rules.mak
 
 %build
 %make oldconfig
-%make dep
 %if %{with_uclibc}
 . uclibc
 %endif
 %make
 
 %install
-rm -rf $RPM_BUILD_ROOT
-install -m755 busybox -D $RPM_BUILD_ROOT%{_bindir}/busybox
+rm -r %{buildroot}
+install -m755 busybox -D %{buildroot}%{_bindir}/busybox
 
 %clean
-rm -rf $RPM_BUILD_ROOT
+rm -rf %{buildroot}
 
 %files
 %defattr(-,root,root)
