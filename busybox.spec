@@ -5,8 +5,8 @@
 %endif
 
 %define name	busybox
-%define version 1.1.2
-%define release	2
+%define version 1.4.2
+%define release	1
 
 Name:		%{name}
 Version:	%{version}
@@ -59,14 +59,12 @@ perl -pi -e "s#-march=i386#-march=i586 -mtune=pentiumpro#g" Rules.mak
 %install
 rm -rf $RPM_BUILD_ROOT
 install -m755 busybox -D $RPM_BUILD_ROOT%{_bindir}/busybox
-install -m644 docs/BusyBox.1 -D $RPM_BUILD_ROOT%{_mandir}/man1/busybox.1
 
 %clean
 rm -rf $RPM_BUILD_ROOT
 
 %files
 %defattr(-,root,root)
-%doc AUTHORS INSTALL README TODO docs/BusyBox.txt
+%doc AUTHORS INSTALL README TODO
 %{_bindir}/busybox
-%{_mandir}/man1/busybox.1*
 
