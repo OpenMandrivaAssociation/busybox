@@ -4,9 +4,9 @@
 %define with_uclibc 1
 %endif
 
-%define name	busybox
-%define version 1.4.2
-%define release	1
+%define name    busybox
+%define version 1.5.1
+%define release 1
 
 Name:		%{name}
 Version:	%{version}
@@ -18,7 +18,7 @@ Group:		Shells
 URL:		http://www.busybox.net/
 Source0:	http://www.busybox.net/downloads/%{name}-%{version}.tar.bz2
 Source1:	http://www.busybox.net/downloads/%{name}-%{version}.tar.bz2.sign
-Source2:	%{name}-%{version}.config.bz2
+Source2:	busybox-%{version}.config
 BuildRequires:	gcc >= 3.3.1-2mdk
 %if %{with_uclibc}
 BuildRequires:	uClibc-static-devel >= 0.9.26-5mdk
@@ -45,8 +45,7 @@ and a kernel.
 
 %prep
 %setup -q
-bzcat %{SOURCE2} > .config
-perl -pi -e "s#-march=i386#-march=i586 -mtune=pentiumpro#g" Rules.mak
+cp %{_sourcedir}/busybox-%{version}.config .config
 
 %build
 %make oldconfig
@@ -56,7 +55,7 @@ perl -pi -e "s#-march=i386#-march=i586 -mtune=pentiumpro#g" Rules.mak
 %make
 
 %install
-rm -r %{buildroot}
+rm -rf %{buildroot}
 install -m755 busybox -D %{buildroot}%{_bindir}/busybox
 
 %clean
@@ -64,6 +63,6 @@ rm -rf %{buildroot}
 
 %files
 %defattr(-,root,root)
-%doc AUTHORS INSTALL README TODO
+%doc AUTHORS README TODO
 %{_bindir}/busybox
 
