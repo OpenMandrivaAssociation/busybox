@@ -1,12 +1,15 @@
-%define with_uclibc %{?_without_uclibc:0} %{!?_without_uclibc:1}
-
-%ifarch %{sunsparc} x86_64 ppc
+%ifarch %{sunsparc} x86_64 %{ix86}
 %define with_uclibc 1
+%else
+%define with_uclibc 0
 %endif
+
+%{expand: %{?_with_uclibc:         %%global with_uclibc 1}}
+%{expand: %{?_without_uclibc:         %%global with_uclibc 0}}
 
 %define name    busybox
 %define version 1.5.1
-%define release 1
+%define release 2
 
 Name:		%{name}
 Version:	%{version}
