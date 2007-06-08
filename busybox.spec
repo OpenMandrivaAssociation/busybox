@@ -21,7 +21,7 @@ Group:		Shells
 URL:		http://www.busybox.net/
 Source0:	http://www.busybox.net/downloads/%{name}-%{version}.tar.bz2
 Source1:	http://www.busybox.net/downloads/%{name}-%{version}.tar.bz2.sign
-Source2:	busybox-%{version}.config
+Source2:	busybox.config
 BuildRequires:	gcc >= 3.3.1-2mdk
 %if %{with_uclibc}
 BuildRequires:	uClibc-static-devel >= 0.9.26-5mdk
@@ -48,7 +48,7 @@ and a kernel.
 
 %prep
 %setup -q
-cp %{_sourcedir}/busybox-%{version}.config .config
+cp %{_sourcedir}/busybox.config .config
 
 %build
 %make oldconfig
