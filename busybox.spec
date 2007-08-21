@@ -8,8 +8,8 @@
 %{expand: %{?_without_uclibc:         %%global with_uclibc 0}}
 
 %define name    busybox
-%define version 1.5.1
-%define release 3
+%define version 1.6.1
+%define release 1
 
 Name:		%{name}
 Version:	%{version}
@@ -22,6 +22,8 @@ URL:		http://www.busybox.net/
 Source0:	http://www.busybox.net/downloads/%{name}-%{version}.tar.bz2
 Source1:	http://www.busybox.net/downloads/%{name}-%{version}.tar.bz2.sign
 Source2:	busybox.config
+Patch0: 	http://busybox.net/downloads/fixes-1.6.1/busybox-1.6.1-adduser.patch
+Patch1: 	http://busybox.net/downloads/fixes-1.6.1/busybox-1.6.1-init.patch
 BuildRequires:	gcc >= 3.3.1-2mdk
 %if %{with_uclibc}
 BuildRequires:	uClibc-static-devel >= 0.9.26-5mdk
@@ -48,6 +50,8 @@ and a kernel.
 
 %prep
 %setup -q
+%patch0 -p1 -b .adduser
+%patch1 -p1 -b .init
 cp %{_sourcedir}/busybox.config .config
 
 %build
