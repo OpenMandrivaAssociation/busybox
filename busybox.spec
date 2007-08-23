@@ -35,7 +35,7 @@ BuildRoot:	%{_tmppath}/%{name}-%{version}-%{release}-buildroot
 %description
 BusyBox combines tiny versions of many common UNIX utilities into a
 single small executable. It provides minimalist replacements for most
-of the utilities you usually find in GNU fileutils, shellutils, etc.
+of the utilities you usually find in GNU coreutils, shellutils, etc.
 The utilities in BusyBox generally have fewer options than their
 full-featured GNU cousins; however, the options that are included provide
 the expected functionality and behave very much like their GNU counterparts.
