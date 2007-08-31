@@ -9,7 +9,7 @@
 
 %define name    busybox
 %define version 1.6.1
-%define release 1
+%define release 2
 
 Name:		%{name}
 Version:	%{version}
@@ -55,11 +55,17 @@ and a kernel.
 cp %{_sourcedir}/busybox.config .config
 
 %build
-%make oldconfig
 %if %{with_uclibc}
 . uclibc
-%endif
+%make CC="/usr/i586-linux-uclibc/bin/i586-uclibc-gcc -static -DKBUILD_NO_NLS" \
+      HOSTCC="/usr/i586-linux-uclibc/bin/i586-uclibc-gcc -static -DKBUILD_NO_NLS" \
+      oldconfig
+%make CC="/usr/i586-linux-uclibc/bin/i586-uclibc-gcc -static -DKBUILD_NO_NLS" \
+      HOSTCC="/usr/i586-linux-uclibc/bin/i586-uclibc-gcc -static -DKBUILD_NO_NLS"
+%else
+%make oldconfig
 %make
+%endif
 
 %install
 rm -rf %{buildroot}
