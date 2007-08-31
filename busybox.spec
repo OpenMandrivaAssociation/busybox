@@ -57,11 +57,11 @@ cp %{_sourcedir}/busybox.config .config
 %build
 %if %{with_uclibc}
 . uclibc
-%make CC="/usr/i586-linux-uclibc/bin/i586-uclibc-gcc -static -DKBUILD_NO_NLS" \
-      HOSTCC="/usr/i586-linux-uclibc/bin/i586-uclibc-gcc -static -DKBUILD_NO_NLS" \
+%make CC="/usr/%{_target_cpu}-linux-uclibc/bin/%{_target_cpu}-uclibc-gcc -static -DKBUILD_NO_NLS" \
+      HOSTCC="/usr/%{_target_cpu}-linux-uclibc/bin/%{_target_cpu}-uclibc-gcc -static -DKBUILD_NO_NLS" \
       oldconfig
-%make CC="/usr/i586-linux-uclibc/bin/i586-uclibc-gcc -static -DKBUILD_NO_NLS" \
-      HOSTCC="/usr/i586-linux-uclibc/bin/i586-uclibc-gcc -static -DKBUILD_NO_NLS"
+%make CC="/usr/%{_target_cpu}-linux-uclibc/bin/%{_target_cpu}-uclibc-gcc -static -DKBUILD_NO_NLS" \
+      HOSTCC="/usr/%{_target_cpu}-linux-uclibc/bin/%{_target_cpu}-uclibc-gcc -static -DKBUILD_NO_NLS"
 %else
 %make oldconfig
 %make
