@@ -9,7 +9,7 @@
 
 %define name    busybox
 %define version 1.6.1
-%define release 2
+%define release 3
 
 Name:		%{name}
 Version:	%{version}
