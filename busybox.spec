@@ -30,7 +30,6 @@ BuildRequires:	uClibc-static-devel >= 0.9.26-5mdk
 %else
 BuildRequires:	glibc-static-devel
 %endif
-BuildRoot:	%{_tmppath}/%{name}-%{version}-%{release}-buildroot
 
 %description
 BusyBox combines tiny versions of many common UNIX utilities into a
