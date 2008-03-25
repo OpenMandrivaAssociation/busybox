@@ -66,6 +66,7 @@ cp %{_sourcedir}/busybox.config .config
 %make oldconfig
 %make
 %endif
+HOSTCC=gcc applets/busybox.mkll > busybox.links
 
 %install
 rm -rf %{buildroot}
@@ -76,6 +77,5 @@ rm -rf %{buildroot}
 
 %files
 %defattr(-,root,root)
-%doc AUTHORS README TODO
+%doc AUTHORS README TODO busybox.links
 %{_bindir}/busybox
-
