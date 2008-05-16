@@ -7,15 +7,11 @@
 %{expand: %{?_with_uclibc:         %%global with_uclibc 1}}
 %{expand: %{?_without_uclibc:         %%global with_uclibc 0}}
 
-%define name    busybox
-%define version 1.6.1
-%define release 4
-
-Name:		%{name}
-Version:	%{version}
-Release:	%mkrel %{release}
-Epoch:		1
 Summary:	Multi-call binary combining many common Unix tools into one executable
+Name:		busybox
+Version:	1.6.1
+Release:	%mkrel 5
+Epoch:		1
 License:	GPL
 Group:		Shells
 URL:		http://www.busybox.net/
@@ -24,6 +20,7 @@ Source1:	http://www.busybox.net/downloads/%{name}-%{version}.tar.bz2.sign
 Source2:	busybox.config
 Patch0: 	http://busybox.net/downloads/fixes-1.6.1/busybox-1.6.1-adduser.patch
 Patch1: 	http://busybox.net/downloads/fixes-1.6.1/busybox-1.6.1-init.patch
+Patch2: 	busybox-rootpath_fix.diff
 BuildRequires:	gcc >= 3.3.1-2mdk
 %if %{with_uclibc}
 BuildRequires:	uClibc-static-devel >= 0.9.26-5mdk
@@ -49,9 +46,12 @@ your embedded systems. To create a working system, just add /dev, /etc,
 and a kernel.
 
 %prep
+
 %setup -q
 %patch0 -p1 -b .adduser
 %patch1 -p1 -b .init
+%patch2 -p0 -b .rootpath_fix
+
 cp %{_sourcedir}/busybox.config .config
 
 %build
