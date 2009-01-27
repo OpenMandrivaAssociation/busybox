@@ -1,16 +1,7 @@
-%ifarch %{sunsparc} x86_64 %{ix86}
-%define with_uclibc 1
-%else
-%define with_uclibc 0
-%endif
-
-%{expand: %{?_with_uclibc:         %%global with_uclibc 1}}
-%{expand: %{?_without_uclibc:         %%global with_uclibc 0}}
-
 Summary:	Multi-call binary combining many common Unix tools into one executable
 Name:		busybox
-Version:	1.6.1
-Release:	%mkrel 6
+Version:	1.13.2
+Release:	%mkrel 1
 Epoch:		1
 License:	GPL
 Group:		Shells
@@ -18,15 +9,12 @@ URL:		http://www.busybox.net/
 Source0:	http://www.busybox.net/downloads/%{name}-%{version}.tar.bz2
 Source1:	http://www.busybox.net/downloads/%{name}-%{version}.tar.bz2.sign
 Source2:	busybox.config
-Patch0: 	http://busybox.net/downloads/fixes-1.6.1/busybox-1.6.1-adduser.patch
-Patch1: 	http://busybox.net/downloads/fixes-1.6.1/busybox-1.6.1-init.patch
-Patch2: 	busybox-rootpath_fix.diff
+Patch0: busybox-1.12.1-static.patch
+Patch12: busybox-1.2.2-ls.patch
+Patch14: busybox-1.9.0-msh.patch
+Patch16: busybox-1.10.1-hwclock.patch
 BuildRequires:	gcc >= 3.3.1-2mdk
-%if %{with_uclibc}
-BuildRequires:	uClibc-static-devel >= 0.9.26-5mdk
-%else
 BuildRequires:	glibc-static-devel
-%endif
 BuildRoot:	%{_tmppath}/%{name}-%{version}-%{release}-buildroot
 
 %description
@@ -48,29 +36,25 @@ and a kernel.
 %prep
 
 %setup -q
-%patch0 -p1 -b .adduser
-%patch1 -p1 -b .init
-%patch2 -p0 -b .rootpath_fix
-
-cp %{_sourcedir}/busybox.config .config
+%patch0 -b .static -p1
+%patch12 -b .ls -p1
+%patch14 -b .msh -p1
+%patch16 -b .ia64 -p1
 
 %build
-%if %{with_uclibc}
-. uclibc
-%make CC="/usr/%{_target_cpu}-linux-uclibc/bin/%{_target_cpu}-uclibc-gcc -static -DKBUILD_NO_NLS" \
-      HOSTCC="/usr/%{_target_cpu}-linux-uclibc/bin/%{_target_cpu}-uclibc-gcc -static -DKBUILD_NO_NLS" \
-      oldconfig
-%make CC="/usr/%{_target_cpu}-linux-uclibc/bin/%{_target_cpu}-uclibc-gcc -static -DKBUILD_NO_NLS" \
-      HOSTCC="/usr/%{_target_cpu}-linux-uclibc/bin/%{_target_cpu}-uclibc-gcc -static -DKBUILD_NO_NLS"
-%else
-%make oldconfig
+make defconfig
+%make CC="gcc"
+cp busybox busybox-static
+make clean
+cp %{_sourcedir}/busybox.config .config
+yes "" | make oldconfig
 %make
-%endif
 HOSTCC=gcc applets/busybox.mkll > busybox.links
 
 %install
 rm -rf %{buildroot}
 install -m755 busybox -D %{buildroot}%{_bindir}/busybox
+install -m755 busybox-static -D %{buildroot}%{_bindir}/busybox-static
 
 %clean
 rm -rf %{buildroot}
@@ -78,4 +62,4 @@ rm -rf %{buildroot}
 %files
 %defattr(-,root,root)
 %doc AUTHORS README TODO busybox.links
-%{_bindir}/busybox
+%{_bindir}/*
