@@ -1,6 +1,6 @@
 Summary:	Multi-call binary combining many common Unix tools into one executable
 Name:		busybox
-Version:	1.13.3
+Version:	1.14.1
 Release:	%mkrel 1
 Epoch:		1
 License:	GPL
