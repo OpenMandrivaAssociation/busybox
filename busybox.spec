@@ -1,7 +1,7 @@
 Summary:	Multi-call binary combining many common Unix tools into one executable
 Name:		busybox
-Version:	1.14.3
-Release:	%mkrel 2
+Version:	1.15.2
+Release:	%mkrel 1
 Epoch:		1
 License:	GPL
 Group:		Shells
@@ -11,7 +11,6 @@ Source1:	http://www.busybox.net/downloads/%{name}-%{version}.tar.bz2.sign
 Source2:	busybox.config
 Patch0: busybox-1.12.1-static.patch
 Patch12: busybox-1.2.2-ls.patch
-Patch14: busybox-1.9.0-msh.patch
 Patch16: busybox-1.10.1-hwclock.patch
 BuildRequires:	gcc >= 3.3.1-2mdk
 BuildRequires:	glibc-static-devel
@@ -38,7 +37,6 @@ and a kernel.
 %setup -q
 %patch0 -b .static -p1
 %patch12 -b .ls -p1
-%patch14 -b .msh -p1
 %patch16 -b .ia64 -p1
 
 %build
