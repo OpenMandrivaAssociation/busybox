@@ -1,3 +1,5 @@
+%bcond_without	uclibc
+
 Summary:	Multi-call binary combining many common Unix tools into one executable
 Name:		busybox
 Version:	1.15.2
@@ -9,11 +11,15 @@ URL:		http://www.busybox.net/
 Source0:	http://www.busybox.net/downloads/%{name}-%{version}.tar.bz2
 Source1:	http://www.busybox.net/downloads/%{name}-%{version}.tar.bz2.sign
 Source2:	busybox.config
-Patch0: busybox-1.12.1-static.patch
-Patch12: busybox-1.2.2-ls.patch
-Patch16: busybox-1.10.1-hwclock.patch
+#Patch0:	busybox-1.12.1-static.patch
+Patch12:	busybox-1.2.2-ls.patch
+Patch16:	busybox-1.10.1-hwclock.patch
 BuildRequires:	gcc >= 3.3.1-2mdk
+%if %{with uclibc} 	 
+BuildRequires:	uClibc-static-devel >= 0.9.26-5mdk 	 
+%else 	 
 BuildRequires:	glibc-static-devel
+%endif
 BuildRoot:	%{_tmppath}/%{name}-%{version}-%{release}-buildroot
 
 %description
@@ -33,26 +39,27 @@ your embedded systems. To create a working system, just add /dev, /etc,
 and a kernel.
 
 %prep
-
 %setup -q
-%patch0 -b .static -p1
+#%%patch0 -b .static -p1
 %patch12 -b .ls -p1
 %patch16 -b .ia64 -p1
 
+cp %{SOURCE2} .config
+
 %build
-make defconfig
-%make CC="gcc"
-cp busybox busybox-static
-make clean
-cp %{_sourcedir}/busybox.config .config
-yes "" | make oldconfig
-%make
+yes "" | %make oldconfig V=1
+%make CC=%{_target_cpu}-linux-uclibc-gcc V=1
+
 HOSTCC=gcc applets/busybox.mkll > busybox.links
+
+%check
+# FIXME
+exit 0
+%make CC=%{_target_cpu}-linux-uclibc-gcc V=1 check
 
 %install
 rm -rf %{buildroot}
 install -m755 busybox -D %{buildroot}%{_bindir}/busybox
-install -m755 busybox-static -D %{buildroot}%{_bindir}/busybox-static
 
 %clean
 rm -rf %{buildroot}
@@ -60,4 +67,4 @@ rm -rf %{buildroot}
 %files
 %defattr(-,root,root)
 %doc AUTHORS README TODO busybox.links
-%{_bindir}/*
+%{_bindir}/busybox
