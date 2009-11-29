@@ -1,4 +1,6 @@
-%bcond_without	uclibc
+%bcond_without		uclibc
+%define Werror_cflags	%{nil} 
+%define _ssp_cflags	%{nil}
 
 Summary:	Multi-call binary combining many common Unix tools into one executable
 Name:		busybox
@@ -44,11 +46,11 @@ and a kernel.
 %patch12 -b .ls -p1
 %patch16 -b .ia64 -p1
 
-cp %{SOURCE2} .config
+cat %{SOURCE2} |sed -e 's|^.*CONFIG_EXTRA_CFLAGS.*$|CONFIG_EXTRA_CFLAGS="%{optflags} -Os"|g'>> .config
 
 %build
 yes "" | %make oldconfig V=1
-%make CC=%{_target_cpu}-linux-uclibc-gcc V=1
+%make CC=%{_target_cpu}-linux-uclibc-gcc LDFLAGS="%{ldflags}" V=1
 
 HOSTCC=gcc applets/busybox.mkll > busybox.links
 
