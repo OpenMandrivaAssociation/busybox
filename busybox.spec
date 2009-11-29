@@ -50,14 +50,14 @@ cat %{SOURCE2} |sed -e 's|^.*CONFIG_EXTRA_CFLAGS.*$|CONFIG_EXTRA_CFLAGS="%{optfl
 
 %build
 yes "" | %make oldconfig V=1
-%make CC=%{_target_cpu}-linux-uclibc-gcc LDFLAGS="%{ldflags}" V=1
+%make CC=%{_arch}-linux-uclibc-gcc LDFLAGS="%{ldflags}" V=1
 
 HOSTCC=gcc applets/busybox.mkll > busybox.links
 
 %check
 # FIXME
 exit 0
-%make CC=%{_target_cpu}-linux-uclibc-gcc V=1 check
+%make CC=%{_arch}-linux-uclibc-gcc V=1 check
 
 %install
 rm -rf %{buildroot}
