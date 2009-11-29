@@ -21,6 +21,7 @@ BuildRequires:	gcc >= 3.3.1-2mdk
 BuildRequires:	uClibc-static-devel >= 0.9.26-5mdk 	 
 %define _enable_debug_packages  %{nil}
 %define debug_package           %{nil}
+%define __cc %{_arch}-linux-uclibc-gcc
 %else 	 
 BuildRequires:	glibc-static-devel
 %endif
@@ -52,14 +53,14 @@ cat %{SOURCE2} |sed -e 's|^.*CONFIG_EXTRA_CFLAGS.*$|CONFIG_EXTRA_CFLAGS="%{optfl
 
 %build
 yes "" | %make oldconfig V=1
-%make CC=%{_arch}-linux-uclibc-gcc LDFLAGS="%{ldflags}" V=1
+%make CC=%{__cc} LDFLAGS="%{ldflags}" V=1
 
 HOSTCC=gcc applets/busybox.mkll > busybox.links
 
 %check
 # FIXME
 exit 0
-%make CC=%{_arch}-linux-uclibc-gcc V=1 check
+%make CC=%{__cc} V=1 check
 
 %install
 rm -rf %{buildroot}
