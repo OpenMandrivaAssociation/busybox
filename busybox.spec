@@ -14,6 +14,7 @@ Source0:	http://www.busybox.net/downloads/%{name}-%{version}.tar.bz2
 Source1:	http://www.busybox.net/downloads/%{name}-%{version}.tar.bz2.sign
 Source2:	busybox.config
 #Patch0:	busybox-1.12.1-static.patch
+Patch1:		busybox-i.15.2-no-march_i386.patch
 Patch12:	busybox-1.2.2-ls.patch
 Patch16:	busybox-1.10.1-hwclock.patch
 BuildRequires:	gcc >= 3.3.1-2mdk
@@ -47,11 +48,12 @@ and a kernel.
 %prep
 %setup -q
 #%%patch0 -b .static -p1
-%patch12 -b .ls -p1
-%patch16 -b .ia64 -p1
+%patch1 -b .no_march~ -p1
+%patch12 -b .ls~ -p1
+%patch16 -b .ia64~ -p1
 
 cat %{SOURCE2} |sed \
-	-e 's|^.*CONFIG_EXTRA_CFLAGS.*$|CONFIG_EXTRA_CFLAGS="%{optflags} -Os"|g' \
+	-e 's|^.*CONFIG_EXTRA_CFLAGS.*$|CONFIG_EXTRA_CFLAGS="%{optflags} -fno-strict-aliasing -Os"|g' \
 %if !%{with uclibc}
 	-e 's|^.*CONFIG_EJECT.*|CONFIG_EJECT=n|g' \
 %endif
@@ -65,7 +67,7 @@ HOSTCC=gcc applets/busybox.mkll > busybox.links
 
 %check
 # FIXME
-exit 0
+#exit 0
 %make CC=%{__cc} V=1 check
 
 %install
