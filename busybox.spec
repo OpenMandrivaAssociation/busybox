@@ -67,8 +67,9 @@ HOSTCC=gcc applets/busybox.mkll > busybox.links
 
 %check
 # FIXME
-exit 0
+%if 0
 %make CC=%{__cc} V=1 check
+%endif
 
 %install
 rm -rf %{buildroot}
