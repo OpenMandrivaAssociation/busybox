@@ -49,7 +49,12 @@ and a kernel.
 %patch12 -b .ls -p1
 %patch16 -b .ia64 -p1
 
-cat %{SOURCE2} |sed -e 's|^.*CONFIG_EXTRA_CFLAGS.*$|CONFIG_EXTRA_CFLAGS="%{optflags} -Os"|g'>> .config
+cat %{SOURCE2} |sed \
+	-e 's|^.*CONFIG_EXTRA_CFLAGS.*$|CONFIG_EXTRA_CFLAGS="%{optflags} -Os"|g' \
+%if !%{with uclibc}
+	-e 's|^.*CONFIG_EJECT.*|CONFIG_EJECT=n|g' \
+%endif
+	>> .config
 
 %build
 yes "" | %make oldconfig V=1
