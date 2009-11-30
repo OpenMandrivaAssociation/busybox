@@ -22,6 +22,7 @@ BuildRequires:	uClibc-static-devel >= 0.9.26-5mdk
 %define _enable_debug_packages  %{nil}
 %define debug_package           %{nil}
 %define __cc %{_arch}-linux-uclibc-gcc
+%define _ssp_cflags %{nil}
 %else 	 
 BuildRequires:	glibc-static-devel
 %endif
