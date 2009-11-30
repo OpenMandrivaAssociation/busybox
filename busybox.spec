@@ -22,8 +22,8 @@ BuildRequires:	gcc >= 3.3.1-2mdk
 BuildRequires:	uClibc-static-devel >= 0.9.26-5mdk 	 
 %define _enable_debug_packages  %{nil}
 %define debug_package           %{nil}
-%define __cc uclibc-gcc
-%define _ssp_cflags %{nil}
+%define __cc			%{uclibc_cc}
+%define _ssp_cflags		%{nil}
 %else 	 
 BuildRequires:	glibc-static-devel
 %endif
