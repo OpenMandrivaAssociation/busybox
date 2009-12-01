@@ -54,9 +54,6 @@ and a kernel.
 
 cat %{SOURCE2} |sed \
 	-e 's|^.*CONFIG_EXTRA_CFLAGS.*$|CONFIG_EXTRA_CFLAGS="%{optflags} -fno-strict-aliasing -Os"|g' \
-%if !%{with uclibc}
-	-e 's|^.*CONFIG_EJECT.*|CONFIG_EJECT=n|g' \
-%endif
 	>> .config
 
 %build
