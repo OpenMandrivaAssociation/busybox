@@ -12,7 +12,7 @@ Group:		Shells
 URL:		http://www.busybox.net/
 Source0:	http://www.busybox.net/downloads/%{name}-%{version}.tar.bz2
 Source1:	http://www.busybox.net/downloads/%{name}-%{version}.tar.bz2.sign
-Source2:	busybox.config
+Source2:	busybox-1.15.2-config
 #Patch0:	busybox-1.12.1-static.patch
 Patch1:		busybox-i.15.2-no-march_i386.patch
 Patch12:	busybox-1.2.2-ls.patch
@@ -24,8 +24,10 @@ BuildRequires:	uClibc-static-devel >= 0.9.26-5mdk
 %define debug_package           %{nil}
 %define __cc			%{uclibc_cc}
 %define _ssp_cflags		%{nil}
-%else 	 
+%define	cflags			%{uclibc_cflags}
+%else
 BuildRequires:	glibc-static-devel
+%define	cflags			%{optflags}
 %endif
 BuildRoot:	%{_tmppath}/%{name}-%{version}-%{release}-buildroot
 
@@ -53,7 +55,7 @@ and a kernel.
 %patch16 -b .ia64~ -p1
 
 cat %{SOURCE2} |sed \
-	-e 's|^.*CONFIG_EXTRA_CFLAGS.*$|CONFIG_EXTRA_CFLAGS="%{optflags} -fno-strict-aliasing -Os"|g' \
+	-e 's|^.*CONFIG_EXTRA_CFLAGS.*$|CONFIG_EXTRA_CFLAGS="%{cflags} -fno-strict-aliasing"|g' \
 	>> .config
 
 %build
