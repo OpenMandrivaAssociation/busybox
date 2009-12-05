@@ -62,8 +62,6 @@ cat %{SOURCE2} |sed \
 yes "" | %make oldconfig V=1
 %make CC=%{__cc} LDFLAGS="%{ldflags}" V=1
 
-HOSTCC=gcc applets/busybox.mkll > busybox.links
-
 %check
 # FIXME
 %if 0
@@ -79,5 +77,5 @@ rm -rf %{buildroot}
 
 %files
 %defattr(-,root,root)
-%doc AUTHORS README TODO busybox.links
+%doc AUTHORS README TODO
 %{_bindir}/busybox
