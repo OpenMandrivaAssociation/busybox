@@ -45,6 +45,13 @@ commands (or features) at compile time. This makes it easy to customize
 your embedded systems. To create a working system, just add /dev, /etc,
 and a kernel.
 
+%package	static
+Group:		Shells
+Summary:	Static linked busybox
+
+%description	static
+This package contains a static linked busybox.
+
 %prep
 %setup -q
 #%%patch0 -b .static -p1
@@ -58,7 +65,10 @@ cat %{SOURCE2} |sed \
 	> .config
 yes "" | %make oldconfig V=1
 %make CC=%{__cc} LDFLAGS="%{ldflags}" V=1
+mv busybox_unstripped busybox.full.static
+%make CC=%{__cc} LDFLAGS="%{ldflags}" V=1 CONFIG_STATIC=n
 mv busybox_unstripped busybox.full
+
 
 %if %{with uclibc}
 cat %{SOURCE3} |sed \
@@ -66,6 +76,8 @@ cat %{SOURCE3} |sed \
 	> .config
 yes "" | %make oldconfig V=1
 %make CC=%{__cc} LDFLAGS="%{ldflags}" V=1
+mv busybox_unstripped busybox.minimal.static
+%make CC=%{__cc} LDFLAGS="%{ldflags}" V=1 CONFIG_STATIC=n
 mv busybox_unstripped busybox.minimal
 %endif
 
@@ -78,8 +90,10 @@ mv busybox_unstripped busybox.minimal
 %install
 rm -rf %{buildroot}
 install -m755 busybox.full -D %{buildroot}%{_bindir}/busybox
+install -m755 busybox.full.static -D %{buildroot}/bin/busybox.static
 %if %{with uclibc}
 install -m755 busybox.minimal -D %{buildroot}%{uclibc_root}%{_bindir}/busybox.minimal
+install -m755 busybox.minimal.static -D %{buildroot}%{uclibc_root}/bin/busybox.minimal.static
 %endif
 
 %clean
@@ -91,4 +105,12 @@ rm -rf %{buildroot}
 %{_bindir}/busybox
 %if %{with uclibc}
 %{uclibc_root}%{_bindir}/busybox.minimal
+%endif
+
+%files static
+%defattr(-,root,root)
+%doc AUTHORS README TODO
+/bin/busybox.static
+%if %{with uclibc}
+%{uclibc_root}/bin/busybox.minimal.static
 %endif
