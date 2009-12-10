@@ -21,10 +21,7 @@ Patch16:	busybox-1.10.1-hwclock.patch
 BuildRequires:	gcc >= 3.3.1-2mdk
 %if %{with uclibc} 	 
 BuildRequires:	uClibc-static-devel >= 0.9.26-5mdk 	 
-%define _enable_debug_packages  %{nil}
-%define debug_package           %{nil}
 %define __cc			%{uclibc_cc}
-%define _ssp_cflags		%{nil}
 %define	cflags			%{uclibc_cflags}
 %else
 BuildRequires:	glibc-static-devel
