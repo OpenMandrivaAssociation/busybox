@@ -13,6 +13,7 @@ URL:		http://www.busybox.net/
 Source0:	http://www.busybox.net/downloads/%{name}-%{version}.tar.bz2
 Source1:	http://www.busybox.net/downloads/%{name}-%{version}.tar.bz2.sign
 Source2:	busybox-1.15.2-config
+Source3:	busybox-1.15.2-minimal-config
 #Patch0:	busybox-1.12.1-static.patch
 Patch1:		busybox-i.15.2-no-march_i386.patch
 Patch12:	busybox-1.2.2-ls.patch
@@ -54,13 +55,22 @@ and a kernel.
 %patch12 -b .ls~ -p1
 %patch16 -b .ia64~ -p1
 
+%build
 cat %{SOURCE2} |sed \
 	-e 's|^.*CONFIG_EXTRA_CFLAGS.*$|CONFIG_EXTRA_CFLAGS="%{cflags} -fno-strict-aliasing"|g' \
-	>> .config
-
-%build
+	> .config
 yes "" | %make oldconfig V=1
 %make CC=%{__cc} LDFLAGS="%{ldflags}" V=1
+mv busybox_unstripped busybox.full
+
+%if %{with uclibc}
+cat %{SOURCE3} |sed \
+	-e 's|^.*CONFIG_EXTRA_CFLAGS.*$|CONFIG_EXTRA_CFLAGS="%{cflags} -fno-strict-aliasing"|g' \
+	> .config
+yes "" | %make oldconfig V=1
+%make CC=%{__cc} LDFLAGS="%{ldflags}" V=1
+mv busybox_unstripped busybox.minimal
+%endif
 
 %check
 # FIXME
@@ -70,7 +80,10 @@ yes "" | %make oldconfig V=1
 
 %install
 rm -rf %{buildroot}
-install -m755 busybox -D %{buildroot}%{_bindir}/busybox
+install -m755 busybox.full -D %{buildroot}%{_bindir}/busybox
+%if %{with uclibc}
+install -m755 busybox.minimal -D %{buildroot}%{uclibc_root}%{_bindir}/busybox.minimal
+%endif
 
 %clean
 rm -rf %{buildroot}
@@ -79,3 +92,6 @@ rm -rf %{buildroot}
 %defattr(-,root,root)
 %doc AUTHORS README TODO
 %{_bindir}/busybox
+%if %{with uclibc}
+%{uclibc_root}%{_bindir}/busybox.minimal
+%endif
