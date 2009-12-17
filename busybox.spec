@@ -4,8 +4,8 @@
 
 Summary:	Multi-call binary combining many common Unix tools into one executable
 Name:		busybox
-Version:	1.15.2
-Release:	%mkrel 2
+Version:	1.15.3
+Release:	%mkrel 1
 Epoch:		1
 License:	GPL
 Group:		Shells
@@ -19,13 +19,13 @@ Patch1:		busybox-i.15.2-no-march_i386.patch
 Patch12:	busybox-1.2.2-ls.patch
 Patch16:	busybox-1.10.1-hwclock.patch
 BuildRequires:	gcc >= 3.3.1-2mdk
-%if %{with uclibc} 	 
-BuildRequires:	uClibc-static-devel >= 0.9.26-5mdk 	 
-%define __cc			%{uclibc_cc}
-%define	cflags			%{uclibc_cflags}
+%if %{with uclibc}
+BuildRequires:	uClibc-static-devel >= 0.9.26-5mdk
+%define __cc	%{uclibc_cc}
+%define	cflags	%{uclibc_cflags}
 %else
 BuildRequires:	glibc-static-devel
-%define	cflags			%{optflags}
+%define	cflags	%{optflags}
 %endif
 BuildRoot:	%{_tmppath}/%{name}-%{version}-%{release}-buildroot
 
