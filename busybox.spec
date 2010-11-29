@@ -7,7 +7,7 @@ Name:		busybox
 Version:	1.17.2
 Release:	%mkrel 2
 Epoch:		1
-License:	GPL
+License:	GPLv2
 Group:		Shells
 URL:		http://www.busybox.net/
 Source0:	http://www.busybox.net/downloads/%{name}-%{version}.tar.bz2
