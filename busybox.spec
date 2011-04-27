@@ -27,7 +27,6 @@ BuildRequires:	uClibc-static-devel >= 0.9.30.3-2
 BuildRequires:	glibc-static-devel
 %define	cflags	%{optflags}
 %endif
-BuildRoot:	%{_tmppath}/%{name}-%{version}-%{release}-buildroot
 
 %description
 BusyBox combines tiny versions of many common UNIX utilities into a
@@ -88,7 +87,6 @@ mv busybox_unstripped busybox.minimal
 %endif
 
 %install
-rm -rf %{buildroot}
 install -m755 busybox.full -D %{buildroot}%{_bindir}/busybox
 install -m755 busybox.full.static -D %{buildroot}/bin/busybox.static
 %if %{with uclibc}
@@ -96,11 +94,7 @@ install -m755 busybox.minimal -D %{buildroot}%{uclibc_root}%{_bindir}/busybox.mi
 install -m755 busybox.minimal.static -D %{buildroot}%{uclibc_root}/bin/busybox.minimal.static
 %endif
 
-%clean
-rm -rf %{buildroot}
-
 %files
-%defattr(-,root,root)
 %doc AUTHORS README TODO
 %{_bindir}/busybox
 %if %{with uclibc}
@@ -108,7 +102,6 @@ rm -rf %{buildroot}
 %endif
 
 %files static
-%defattr(-,root,root)
 %doc AUTHORS README TODO
 /bin/busybox.static
 %if %{with uclibc}
