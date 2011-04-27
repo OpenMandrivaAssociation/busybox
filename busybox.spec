@@ -59,26 +59,24 @@ This package contains a static linked busybox.
 %patch16 -b .ia64~ -p1
 
 %build
-cat %{SOURCE2} |sed \
-	-e 's|^.*CONFIG_EXTRA_CFLAGS.*$|CONFIG_EXTRA_CFLAGS="%{cflags} -fno-strict-aliasing"|g' \
-	> .config
-yes "" | %make oldconfig V=1
-%make CC=%{__cc} LDFLAGS="%{ldflags}" V=1
-mv busybox_unstripped busybox.full.static
-%make CC=%{__cc} LDFLAGS="%{ldflags}" V=1 CONFIG_STATIC=n
-mv busybox_unstripped busybox.full
-
-
 %if %{with uclibc}
-cat %{SOURCE3} |sed \
-	-e 's|^.*CONFIG_EXTRA_CFLAGS.*$|CONFIG_EXTRA_CFLAGS="%{cflags} -fno-strict-aliasing"|g' \
-	> .config
+cp %{SOURCE3}  .config
 yes "" | %make oldconfig V=1
-%make CC=%{__cc} LDFLAGS="%{ldflags}" V=1
+%make CC=%{__cc} LDFLAGS="%{ldflags}" V=1 CONFIG_EXTRA_CFLAGS="%{cflags}"
+
 mv busybox_unstripped busybox.minimal.static
-%make CC=%{__cc} LDFLAGS="%{ldflags}" V=1 CONFIG_STATIC=n
+%make CC=%{__cc} LDFLAGS="%{ldflags}" V=1 CONFIG_STATIC=n CONFIG_EXTRA_CFLAGS="%{cflags}"
+
 mv busybox_unstripped busybox.minimal
 %endif
+
+cp %{SOURCE2} .config
+yes "" | %make oldconfig V=1
+%make CC=%{__cc} LDFLAGS="%{ldflags}" V=1 CONFIG_EXTRA_CFLAGS="%{cflags}"
+mv busybox_unstripped busybox.full.static
+%make CC=%{__cc} LDFLAGS="%{ldflags}" V=1 CONFIG_STATIC=n CONFIG_EXTRA_CFLAGS="%{cflags}" CONFIG_PREFIX=%{buildroot}%{uclibc_root}
+cp busybox_unstripped busybox.full
+
 
 %check
 # FIXME
@@ -87,18 +85,28 @@ mv busybox_unstripped busybox.minimal
 %endif
 
 %install
-install -m755 busybox.full -D %{buildroot}%{_bindir}/busybox
-install -m755 busybox.full.static -D %{buildroot}/bin/busybox.static
 %if %{with uclibc}
+make install CONFIG_PREFIX=%{buildroot}%{uclibc_root} CC=%{__cc} LDFLAGS="%{ldflags}" V=1 CONFIG_STATIC=n CONFIG_EXTRA_CFLAGS="%{cflags}"
+
 install -m755 busybox.minimal -D %{buildroot}%{uclibc_root}%{_bindir}/busybox.minimal
+mkdir -p %{buildroot}%{_bindir}
+ln -s %{uclibc_root}/bin/busybox %{buildroot}%{_bindir}/busybox
 install -m755 busybox.minimal.static -D %{buildroot}%{uclibc_root}/bin/busybox.minimal.static
+%else
+install -m755 busybox.full -D %{buildroot}%{_bindir}/busybox
 %endif
+install -m755 busybox.full.static -D %{buildroot}/bin/busybox.static
 
 %files
 %doc AUTHORS README TODO
 %{_bindir}/busybox
 %if %{with uclibc}
-%{uclibc_root}%{_bindir}/busybox.minimal
+%{uclibc_root}/linuxrc
+%{uclibc_root}/bin/*
+%{uclibc_root}/sbin/*
+%{uclibc_root}%{_bindir}/*
+%{uclibc_root}%{_sbindir}/*
+%exclude %{uclibc_root}/bin/busybox.minimal.static
 %endif
 
 %files static
