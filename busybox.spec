@@ -5,7 +5,7 @@
 Summary:	Multi-call binary combining many common Unix tools into one executable
 Name:		busybox
 Version:	1.18.4
-Release:	2
+Release:	3
 Epoch:		1
 License:	GPLv2
 Group:		Shells
@@ -60,23 +60,35 @@ This package contains a static linked busybox.
 
 %build
 %if %{with uclibc}
+mkdir -p minimal.static
+pushd minimal.static
 cp %{SOURCE3}  .config
-yes "" | %make oldconfig V=1
-%make CC=%{__cc} LDFLAGS="%{ldflags}" V=1 CONFIG_EXTRA_CFLAGS="%{cflags}"
+yes "" | %make oldconfig V=1 KBUILD_SRC=.. -f ../Makefile
+%make CC=%{__cc} LDFLAGS="%{ldflags}" V=1 CONFIG_STATIC=y CONFIG_EXTRA_CFLAGS="%{cflags}" KBUILD_SRC=.. -f ../Makefile
+popd
 
-mv busybox_unstripped busybox.minimal.static
-%make CC=%{__cc} LDFLAGS="%{ldflags}" V=1 CONFIG_STATIC=n CONFIG_EXTRA_CFLAGS="%{cflags}"
-
-mv busybox_unstripped busybox.minimal
+mkdir -p minimal
+pushd minimal
+cp %{SOURCE3}  .config
+yes "" | %make oldconfig V=1 KBUILD_SRC=.. -f ../Makefile
+%make CC=%{__cc} LDFLAGS="%{ldflags}" V=1 CONFIG_STATIC=n CONFIG_EXTRA_CFLAGS="%{cflags}" KBUILD_SRC=.. -f ../Makefile
+popd
 %endif
 
+mkdir -p full.static
+pushd full.static
 cp %{SOURCE2} .config
-yes "" | %make oldconfig V=1
-%make CC=%{__cc} LDFLAGS="%{ldflags}" V=1 CONFIG_EXTRA_CFLAGS="%{cflags}"
-mv busybox_unstripped busybox.full.static
-%make CC=%{__cc} LDFLAGS="%{ldflags}" V=1 CONFIG_STATIC=n CONFIG_EXTRA_CFLAGS="%{cflags}" CONFIG_PREFIX=%{buildroot}%{uclibc_root}
-cp busybox_unstripped busybox.full
+yes "" | %make oldconfig V=1 KBUILD_SRC=.. -f ../Makefile
+%make CC=%{__cc} LDFLAGS="%{ldflags}" V=1 CONFIG_STATIC=y CONFIG_EXTRA_CFLAGS="%{cflags}" KBUILD_SRC=.. -f ../Makefile
+popd
 
+
+mkdir -p full
+pushd full
+cp %{SOURCE2} .config
+yes "" | %make oldconfig V=1 KBUILD_SRC=.. -f ../Makefile
+%make CC=%{__cc} LDFLAGS="%{ldflags}" V=1 CONFIG_STATIC=n CONFIG_EXTRA_CFLAGS="%{cflags}" KBUILD_SRC=.. -f ../Makefile CONFIG_PREFIX=%{buildroot}%{uclibc_root}
+popd
 
 %check
 # FIXME
@@ -86,26 +98,28 @@ cp busybox_unstripped busybox.full
 
 %install
 %if %{with uclibc}
-make install CONFIG_PREFIX=%{buildroot}%{uclibc_root} CC=%{__cc} LDFLAGS="%{ldflags}" V=1 CONFIG_STATIC=n CONFIG_EXTRA_CFLAGS="%{cflags}"
+#pushd full
+#make install CONFIG_PREFIX=%{buildroot}%{uclibc_root} CC=%{__cc} LDFLAGS="%{ldflags}" V=1 CONFIG_STATIC=n CONFIG_EXTRA_CFLAGS="%{cflags}"
+#popd
 
-install -m755 busybox.minimal -D %{buildroot}%{uclibc_root}%{_bindir}/busybox.minimal
+install -m755 minimal/busybox_unstripped -D %{buildroot}%{uclibc_root}%{_bindir}/busybox.minimal
 mkdir -p %{buildroot}%{_bindir}
 ln -s %{uclibc_root}/bin/busybox %{buildroot}%{_bindir}/busybox
-install -m755 busybox.minimal.static -D %{buildroot}%{uclibc_root}/bin/busybox.minimal.static
-%else
-install -m755 busybox.full -D %{buildroot}%{_bindir}/busybox
+install -m755 minimal.static/busybox_unstripped -D %{buildroot}%{uclibc_root}/bin/busybox.minimal.static
+#%else
+install -m755 full/busybox_unstripped -D %{buildroot}%{_bindir}/busybox
 %endif
-install -m755 busybox.full.static -D %{buildroot}/bin/busybox.static
+install -m755 full.static/busybox_unstripped -D %{buildroot}/bin/busybox.static
 
 %files
 %doc AUTHORS README TODO
 %{_bindir}/busybox
 %if %{with uclibc}
-%{uclibc_root}/linuxrc
-%{uclibc_root}/bin/*
-%{uclibc_root}/sbin/*
+#%{uclibc_root}/linuxrc
+#%{uclibc_root}/bin/*
+#%{uclibc_root}/sbin/*
 %{uclibc_root}%{_bindir}/*
-%{uclibc_root}%{_sbindir}/*
+#%{uclibc_root}%{_sbindir}/*
 %exclude %{uclibc_root}/bin/busybox.minimal.static
 %endif
 
