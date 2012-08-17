@@ -56,7 +56,7 @@ This package contains a static linked busybox.
 
 %prep
 %setup -q
-%patch1 -1 -b .no_march~
+%patch1 -p1 -b .no_march~
 %patch12 -p1 -b .ls~
 %patch16 -p1 -b .ia64~
 %patch17 -p1 -b .pidof_x~
