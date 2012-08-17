@@ -14,7 +14,6 @@ Source0:	http://www.busybox.net/downloads/%{name}-%{version}.tar.bz2
 Source1:	http://www.busybox.net/downloads/%{name}-%{version}.tar.bz2.sign
 Source2:	busybox-1.20.2-config
 Source3:	busybox-1.18.4-minimal-config
-#Patch0:	busybox-1.12.1-static.patch
 Patch1:		busybox-i.15.2-no-march_i386.patch
 Patch12:	busybox-1.2.2-ls.patch
 Patch16:	busybox-1.10.1-hwclock.patch
@@ -57,7 +56,6 @@ This package contains a static linked busybox.
 
 %prep
 %setup -q
-#%%patch0 -p1 -b .static
 %patch1 -1 -b .no_march~
 %patch12 -p1 -b .ls~
 %patch16 -p1 -b .ia64~
