@@ -18,6 +18,10 @@ Source3:	busybox-1.18.4-minimal-config
 Patch1:		busybox-i.15.2-no-march_i386.patch
 Patch12:	busybox-1.2.2-ls.patch
 Patch16:	busybox-1.10.1-hwclock.patch
+# the default behaviour of busybox' pidof implementation is same as for
+# 'pidof -x' from the standard implementation, so let's just make it
+# ignore -x in stead of returning error
+Patch17:	busybox-1.20.2-pidof-x-argument.patch
 BuildRequires:	gcc >= 3.3.1-2mdk
 %if %{with uclibc}
 BuildRequires:	uClibc-static-devel >= 0.9.33.2-3
@@ -57,6 +61,7 @@ This package contains a static linked busybox.
 %patch1 -b .no_march~ -p1
 %patch12 -b .ls~ -p1
 %patch16 -b .ia64~ -p1
+%patch17 -b .pidof_x~
 
 %build
 %if %{with uclibc}
