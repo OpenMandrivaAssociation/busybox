@@ -57,11 +57,11 @@ This package contains a static linked busybox.
 
 %prep
 %setup -q
-#%%patch0 -b .static -p1
-%patch1 -b .no_march~ -p1
-%patch12 -b .ls~ -p1
-%patch16 -b .ia64~ -p1
-%patch17 -b .pidof_x~
+#%%patch0 -p1 -b .static
+%patch1 -1 -b .no_march~
+%patch12 -p1 -b .ls~
+%patch16 -p1 -b .ia64~
+%patch17 -p1 -b .pidof_x~
 
 %build
 %if %{with uclibc}
