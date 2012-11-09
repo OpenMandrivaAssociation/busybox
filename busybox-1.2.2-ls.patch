@@ -1,0 +1,19 @@
+diff -p -up busybox-1.16.0/coreutils/ls.c.ls busybox-1.16.0/coreutils/ls.c
+--- busybox-1.16.0/coreutils/ls.c.ls	2010-01-24 22:59:38.000000000 -0200
++++ busybox-1.16.0/coreutils/ls.c	2010-02-04 13:05:21.000000000 -0200
+@@ -585,6 +585,7 @@ static void showfiles(struct dnode **dn,
+ 		putchar('\n');
+ 		column = 0;
+ 	}
++	fflush(stdout);
+ }
+ 
+ 
+@@ -664,6 +665,7 @@ static void showdirs(struct dnode **dn, 
+ 			dfree(subdnp);
+ 		}
+ 	}
++	fflush(stdout);
+ }
+ 
+ 

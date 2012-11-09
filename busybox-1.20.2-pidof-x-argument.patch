@@ -1,0 +1,11 @@
+--- busybox-1.20.2/procps/pidof.c.x~	2012-08-18 00:55:54.823541283 +0200
++++ busybox-1.20.2/procps/pidof.c	2012-08-18 00:55:56.009556493 +0200
+@@ -55,7 +55,7 @@ int pidof_main(int argc UNUSED_PARAM, ch
+ #endif
+ 
+ 	/* do unconditional option parsing */
+-	opt = getopt32(argv, ""
++	opt = getopt32(argv, "x"
+ 			IF_FEATURE_PIDOF_SINGLE ("s")
+ 			IF_FEATURE_PIDOF_OMIT("o:", &omits));
+ 
