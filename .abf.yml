@@ -1,5 +1,2 @@
 sources:
-  "busybox-1.18.4-minimal-config:"	c4598aee58b8154c056c975a39e132622b37d46a
-  "busybox-1.20.2-config:"	74d82a316b8466bfd4367ba2a7f94d941350785d
-  "busybox-1.20.2.tar.bz2:"	dd2e3684b13c0071d480e97b569041e69538e798
-  "busybox-1.20.2.tar.bz2.sign:"	d0786344ab19863a8b592bd8e14ae184f45b6a23
+  "busybox-1.20.2.tar.bz2": dd2e3684b13c0071d480e97b569041e69538e798
