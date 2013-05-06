@@ -1,2 +1,4 @@
+removed_sources:
+  busybox-1.20.2.tar.bz2: dd2e3684b13c0071d480e97b569041e69538e798
 sources:
-  "busybox-1.20.2.tar.bz2": dd2e3684b13c0071d480e97b569041e69538e798
+  busybox-1.21.0.tar.bz2: 1e22c35fd5d93db1046c87c141b19026a38e81a2
