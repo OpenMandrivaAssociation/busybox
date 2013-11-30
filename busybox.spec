@@ -12,7 +12,7 @@ Group:		Shells
 URL:		http://www.busybox.net/
 Source0:	http://www.busybox.net/downloads/%{name}-%{version}.tar.bz2
 Source1:	http://www.busybox.net/downloads/%{name}-%{version}.tar.bz2.sign
-Source2:	busybox-1.20.2-config
+Source2:	busybox-1.21.1-config
 Source3:	busybox-1.18.4-minimal-config
 Patch1:		busybox-i.15.2-no-march_i386.patch
 Patch12:	busybox-1.2.2-ls.patch
