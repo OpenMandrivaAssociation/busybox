@@ -1,4 +1,4 @@
-%bcond_without		uclibc
+%bcond_with		uclibc
 %define Werror_cflags	%{nil} 
 %define _ssp_cflags	%{nil}
 
