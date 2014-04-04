@@ -21,7 +21,7 @@ Patch16:	busybox-1.10.1-hwclock.patch
 # 'pidof -x' from the standard implementation, so let's just make it
 # ignore -x in stead of returning error
 Patch17:	busybox-1.20.2-pidof-x-argument.patch
-BuildRequires:	gcc >= 3.3.1-2mdk
+BuildRequires:	pkgconfig(libtirpc)
 %if %{with uclibc}
 BuildRequires:	uClibc-static-devel >= 0.9.33.2-3
 %define __cc	%{uclibc_cc}
