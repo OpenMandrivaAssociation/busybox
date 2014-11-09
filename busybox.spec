@@ -50,6 +50,20 @@ Summary:	Static linked busybox
 %description	static
 This package contains a static linked busybox.
 
+%package	minimal-static
+Group:		Shells
+Summary:	Static linked busybox
+
+%description	minimal-static
+This package contains a static linked busybox(uClibc).
+
+%package	minimal
+Group:		Shells
+Summary:	Minimal busybox
+
+%description	minimal
+This package contains a minimal busybox.
+
 %prep
 %setup -q
 %apply_patches
@@ -118,18 +132,15 @@ install -m755 full.static/busybox_unstripped -D %{buildroot}/bin/busybox.static
 %files
 %doc AUTHORS README TODO
 %{_bindir}/busybox
-%if %{with uclibc}
-#%{uclibc_root}/linuxrc
-#%{uclibc_root}/bin/*
-#%{uclibc_root}/sbin/*
-%{uclibc_root}%{_bindir}/*
-#%{uclibc_root}%{_sbindir}/*
-%exclude %{uclibc_root}/bin/busybox.minimal.static
-%endif
 
 %files static
 %doc AUTHORS README TODO
 /bin/busybox.static
+
 %if %{with uclibc}
+%files minimal
+%{uclibc_root}%{_bindir}/*
+
+%files minimal-static
 %{uclibc_root}/bin/busybox.minimal.static
 %endif
