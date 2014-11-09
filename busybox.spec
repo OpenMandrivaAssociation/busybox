@@ -26,7 +26,6 @@ BuildRequires:	pkgconfig(libtirpc)
 BuildRequires:	uClibc-static-devel >= 0.9.33.2-3
 %endif
 BuildRequires:	glibc-static-devel
-%define	cflags	%{optflags}
 
 %description
 BusyBox combines tiny versions of many common UNIX utilities into a
@@ -59,10 +58,7 @@ This package contains a static linked busybox.
 sed -i -e 's:-static-libgcc::' Makefile.flags
 sed -i -r -e 's:[[:space:]]?-(Werror|Os|falign-(functions|jumps|loops|labels)=1|fomit-frame-pointer)\>::g' Makefile.flags
 sed -i '/^#error Aborting compilation./d' applets/applets.c
-%ifarch aarch64
-sed -i 's!CONFIG_FEATURE_HAVE_RPC=y!CONFIG_FEATURE_HAVE_RPC=n!g' %{SOURCE2}
-sed -i 's!CONFIG_FEATURE_INETD_RPC=y!CONFIG_FEATURE_INETD_RPC=n!g' %{SOURCE2}
-%endif
+sed -i 's:-Wl,--gc-sections::' Makefile
 
 %build
 %if %{with uclibc}
@@ -72,29 +68,31 @@ cp %{SOURCE3}  .config
 yes "" | %make oldconfig V=1 KBUILD_SRC=.. -f ../Makefile
 %make CC=%{uclibc_cc} LDFLAGS="%{ldflags}" V=1 CONFIG_STATIC=y CONFIG_EXTRA_CFLAGS="%{uclibc_cflags}" KBUILD_SRC=.. -f ../Makefile
 popd
-%endif
 
-sed -i 's:-Wl,--gc-sections::' Makefile
 
 mkdir -p minimal
 pushd minimal
 cp %{SOURCE3}  .config
 yes "" | %make oldconfig V=1 KBUILD_SRC=.. -f ../Makefile
-%make CC=%{__cc} LDFLAGS="%{ldflags}" V=1 CONFIG_STATIC=n CONFIG_EXTRA_CFLAGS="%{cflags}" KBUILD_SRC=.. -f ../Makefile
+%make CC=%{uclibc_cc} LDFLAGS="%{ldflags}" V=1 CONFIG_STATIC=n CONFIG_EXTRA_CFLAGS="%{uclibc_cflags}" KBUILD_SRC=.. -f ../Makefile
 popd
+%endif
+
+sed -i 's!CONFIG_FEATURE_HAVE_RPC=y!CONFIG_FEATURE_HAVE_RPC=n!g' %{SOURCE2}
+sed -i 's!CONFIG_FEATURE_INETD_RPC=y!CONFIG_FEATURE_INETD_RPC=n!g' %{SOURCE2}
 
 mkdir -p full.static
 pushd full.static
 cp %{SOURCE2} .config
 yes "" | %make oldconfig V=1 KBUILD_SRC=.. -f ../Makefile
-%make CC=%{__cc} LDFLAGS="%{ldflags}" V=1 CONFIG_STATIC=y CONFIG_EXTRA_CFLAGS="%{cflags}" KBUILD_SRC=.. -f ../Makefile
+%make CC=gcc LDFLAGS="%{ldflags}" V=1 CONFIG_STATIC=y CONFIG_EXTRA_CFLAGS="%{optflags}" KBUILD_SRC=.. -f ../Makefile
 popd
 
 mkdir -p full
 pushd full
 cp %{SOURCE2} .config
 yes "" | %make oldconfig V=1 KBUILD_SRC=.. -f ../Makefile
-%make CC=%{__cc} LDFLAGS="%{ldflags}" V=1 CONFIG_STATIC=n CONFIG_EXTRA_CFLAGS="%{cflags}" KBUILD_SRC=.. -f ../Makefile CONFIG_PREFIX=%{buildroot}%{uclibc_root}
+%make CC=gcc LDFLAGS="%{ldflags}" V=1 CONFIG_STATIC=n CONFIG_EXTRA_CFLAGS="%{optflags}" KBUILD_SRC=.. -f ../Makefile CONFIG_PREFIX=%{buildroot}%{uclibc_root}
 popd
 
 %check
@@ -113,7 +111,6 @@ install -m755 minimal/busybox_unstripped -D %{buildroot}%{uclibc_root}%{_bindir}
 mkdir -p %{buildroot}%{_bindir}
 ln -s %{uclibc_root}/bin/busybox %{buildroot}%{_bindir}/busybox
 install -m755 minimal.static/busybox_unstripped -D %{buildroot}%{uclibc_root}/bin/busybox.minimal.static
-#%else
 %endif
 install -m755 full/busybox_unstripped -D %{buildroot}%{_bindir}/busybox
 install -m755 full.static/busybox_unstripped -D %{buildroot}/bin/busybox.static
