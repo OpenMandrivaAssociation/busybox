@@ -1,4 +1,4 @@
-%bcond_with		uclibc
+%bcond_without		uclibc
 %define Werror_cflags	%{nil} 
 %define _ssp_cflags	%{nil}
 
@@ -24,10 +24,9 @@ Patch17:	busybox-1.20.2-pidof-x-argument.patch
 BuildRequires:	pkgconfig(libtirpc)
 %if %{with uclibc}
 BuildRequires:	uClibc-static-devel >= 0.9.33.2-3
-%else
+%endif
 BuildRequires:	glibc-static-devel
 %define	cflags	%{optflags}
-%endif
 
 %description
 BusyBox combines tiny versions of many common UNIX utilities into a
