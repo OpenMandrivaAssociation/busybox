@@ -1,4 +1,8 @@
+%ifarch aarch64
+%bcond_with		uclibc
+%else
 %bcond_without		uclibc
+%endif
 %define Werror_cflags	%{nil} 
 %define _ssp_cflags	%{nil}
 
@@ -16,7 +20,6 @@ Source2:	busybox-1.21.1-config
 Source3:	busybox-1.18.4-minimal-config
 Patch1:		busybox-i.15.2-no-march_i386.patch
 Patch12:	busybox-1.2.2-ls.patch
-Patch16:	busybox-1.10.1-hwclock.patch
 # the default behaviour of busybox' pidof implementation is same as for
 # 'pidof -x' from the standard implementation, so let's just make it
 # ignore -x in stead of returning error
@@ -24,8 +27,13 @@ Patch17:	busybox-1.20.2-pidof-x-argument.patch
 BuildRequires:	pkgconfig(libtirpc)
 %if %{with uclibc}
 BuildRequires:	uClibc-static-devel >= 0.9.33.2-3
-%endif
+%define	__cc	%{uclibc_cc}
+%define	cflags	%{uclibc_cflags}
+%else
+%define	__cc	gcc
+%define	cflags	%{optflags}
 BuildRequires:	glibc-static-devel
+%endif
 
 %description
 BusyBox combines tiny versions of many common UNIX utilities into a
@@ -69,10 +77,12 @@ This package contains a minimal busybox.
 %apply_patches
 
 # respect cflags
+%if "%(basename %{__cc})" == "clang"
 sed -i -e 's:-static-libgcc::' Makefile.flags
 sed -i -r -e 's:[[:space:]]?-(Werror|Os|falign-(functions|jumps|loops|labels)=1|fomit-frame-pointer)\>::g' Makefile.flags
 sed -i '/^#error Aborting compilation./d' applets/applets.c
 sed -i 's:-Wl,--gc-sections::' Makefile
+%endif
 
 %build
 %if %{with uclibc}
@@ -80,7 +90,7 @@ mkdir -p minimal.static
 pushd minimal.static
 cp %{SOURCE3}  .config
 yes "" | %make oldconfig V=1 KBUILD_SRC=.. -f ../Makefile
-%make CC=%{uclibc_cc} LDFLAGS="%{ldflags}" V=1 CONFIG_STATIC=y CONFIG_EXTRA_CFLAGS="%{uclibc_cflags}" KBUILD_SRC=.. -f ../Makefile
+%make CC=%{__cc} LDFLAGS="%{ldflags}" V=1 CONFIG_STATIC=y CONFIG_EXTRA_CFLAGS="%{uclibc_cflags}" KBUILD_SRC=.. -f ../Makefile
 popd
 
 
@@ -88,25 +98,33 @@ mkdir -p minimal
 pushd minimal
 cp %{SOURCE3}  .config
 yes "" | %make oldconfig V=1 KBUILD_SRC=.. -f ../Makefile
-%make CC=%{uclibc_cc} LDFLAGS="%{ldflags}" V=1 CONFIG_STATIC=n CONFIG_EXTRA_CFLAGS="%{uclibc_cflags}" KBUILD_SRC=.. -f ../Makefile
+%make CC=%{__cc} LDFLAGS="%{ldflags}" V=1 CONFIG_STATIC=n CONFIG_EXTRA_CFLAGS="%{uclibc_cflags}" KBUILD_SRC=.. -f ../Makefile
 popd
 %endif
 
-sed -i 's!CONFIG_FEATURE_HAVE_RPC=y!CONFIG_FEATURE_HAVE_RPC=n!g' %{SOURCE2}
-sed -i 's!CONFIG_FEATURE_INETD_RPC=y!CONFIG_FEATURE_INETD_RPC=n!g' %{SOURCE2}
 
 mkdir -p full.static
 pushd full.static
+%ifarch aarch64
+sed -e 's!CONFIG_FEATURE_HAVE_RPC=y!CONFIG_FEATURE_HAVE_RPC=n!g' > %{SOURCE2}
+sed -e 's!CONFIG_FEATURE_INETD_RPC=y!CONFIG_FEATURE_INETD_RPC=n!g' > %{SOURCE2}
+%else
 cp %{SOURCE2} .config
+%endif
 yes "" | %make oldconfig V=1 KBUILD_SRC=.. -f ../Makefile
-%make CC=gcc LDFLAGS="%{ldflags}" V=1 CONFIG_STATIC=y CONFIG_EXTRA_CFLAGS="%{optflags}" KBUILD_SRC=.. -f ../Makefile
+%make CC=%{__cc} LDFLAGS="%{ldflags}" V=1 CONFIG_STATIC=y CONFIG_EXTRA_CFLAGS="%{cflags}" KBUILD_SRC=.. -f ../Makefile
 popd
 
 mkdir -p full
 pushd full
+%ifarch aarch64
+sed -e 's!CONFIG_FEATURE_HAVE_RPC=y!CONFIG_FEATURE_HAVE_RPC=n!g' > %{SOURCE2}
+sed -e 's!CONFIG_FEATURE_INETD_RPC=y!CONFIG_FEATURE_INETD_RPC=n!g' > %{SOURCE2}
+%else
 cp %{SOURCE2} .config
+%endif
 yes "" | %make oldconfig V=1 KBUILD_SRC=.. -f ../Makefile
-%make CC=gcc LDFLAGS="%{ldflags}" V=1 CONFIG_STATIC=n CONFIG_EXTRA_CFLAGS="%{optflags}" KBUILD_SRC=.. -f ../Makefile CONFIG_PREFIX=%{buildroot}%{uclibc_root}
+%make CC=%{__cc} LDFLAGS="%{ldflags}" V=1 CONFIG_STATIC=n CONFIG_EXTRA_CFLAGS="%{cflags}" KBUILD_SRC=.. -f ../Makefile CONFIG_PREFIX=%{buildroot}%{uclibc_root}
 popd
 
 %check
@@ -122,16 +140,21 @@ popd
 #popd
 
 install -m755 minimal/busybox_unstripped -D %{buildroot}%{uclibc_root}%{_bindir}/busybox.minimal
+install -m755 full/busybox_unstripped -D %{buildroot}%{uclibc_root}/bin/busybox
 mkdir -p %{buildroot}%{_bindir}
 ln -s %{uclibc_root}/bin/busybox %{buildroot}%{_bindir}/busybox
 install -m755 minimal.static/busybox_unstripped -D %{buildroot}%{uclibc_root}/bin/busybox.minimal.static
-%endif
+%else
 install -m755 full/busybox_unstripped -D %{buildroot}%{_bindir}/busybox
+%endif
 install -m755 full.static/busybox_unstripped -D %{buildroot}/bin/busybox.static
 
 %files
 %doc AUTHORS README TODO
 %{_bindir}/busybox
+%if %{with uclibc}
+%{uclibc_root}/bin/busybox
+%endif
 
 %files static
 %doc AUTHORS README TODO
@@ -139,7 +162,7 @@ install -m755 full.static/busybox_unstripped -D %{buildroot}/bin/busybox.static
 
 %if %{with uclibc}
 %files minimal
-%{uclibc_root}%{_bindir}/*
+%{uclibc_root}%{_bindir}/busybox.minimal
 
 %files minimal-static
 %{uclibc_root}/bin/busybox.minimal.static
