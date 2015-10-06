@@ -1,8 +1,4 @@
-%ifarch aarch64
 %bcond_with		uclibc
-%else
-%bcond_without		uclibc
-%endif
 %define Werror_cflags	%{nil} 
 %define _ssp_cflags	%{nil}
 
