@@ -75,9 +75,17 @@ This package contains a minimal busybox.
 # respect cflags
 %if "%(basename %{__cc})" == "clang"
 sed -i -e 's:-static-libgcc::' Makefile.flags
-sed -i -r -e 's:[[:space:]]?-(Werror|Os|falign-(functions|jumps|loops|labels)=1|fomit-frame-pointer)\>::g' Makefile.flags
+# flag cleanup
+sed -i -r -e 's:[[:space:]]?-(Werror|Os|falign-(functions|jumps|loops|labels)=1|finline-limit=0|fomit-frame-pointer)\>::g' Makefile.flags
 sed -i '/^#error Aborting compilation./d' applets/applets.c
 sed -i 's:-Wl,--gc-sections::' Makefile
+
+sed -i \
+	-e "/^CROSS_COMPILE/s:=.*:= %{__cc}:" \
+	-e "/^AR\>/s:=.*:= %{__ar}:" \
+	-e "/^CC\>/s:=.*:= %{__cc}:" \
+	-e "/^HOSTCC/s:=.*:= %{__cc}:" \
+	Makefile
 %endif
 
 %build
