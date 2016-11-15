@@ -3,7 +3,7 @@
 
 Summary:	Multi-call binary combining many common Unix tools into one executable
 Name:		busybox
-Version:	1.25.0
+Version:	1.25.1
 Release:	1
 Epoch:		1
 License:	GPLv2
@@ -19,7 +19,6 @@ Patch12:	busybox-1.2.2-ls.patch
 # ignore -x in stead of returning error
 Patch17:	busybox-1.20.2-pidof-x-argument.patch
 BuildRequires:	pkgconfig(libtirpc)
-%define	__cc	gcc
 %define	cflags	%{optflags}
 BuildRequires:	glibc-static-devel
 
@@ -75,7 +74,7 @@ sed -e 's!CONFIG_FEATURE_HAVE_RPC=y!CONFIG_FEATURE_HAVE_RPC=n!g' .config
 sed -e 's!CONFIG_FEATURE_INETD_RPC=y!CONFIG_FEATURE_INETD_RPC=n!g' .config
 %endif
 yes "" | %make oldconfig V=1 KBUILD_SRC=.. -f ../Makefile
-%make CC=%{__cc} LDFLAGS="%{ldflags}" V=1 CONFIG_STATIC=y CONFIG_EXTRA_CFLAGS="%{cflags}" KBUILD_SRC=.. -f ../Makefile
+%make CC=%{__cc} STRIP="%{__strip}" LDFLAGS="%{ldflags}" V=1 CONFIG_STATIC=y CONFIG_EXTRA_CFLAGS="%{cflags}" KBUILD_SRC=.. -f ../Makefile
 popd
 
 mkdir -p full
@@ -86,7 +85,7 @@ sed -e 's!CONFIG_FEATURE_HAVE_RPC=y!CONFIG_FEATURE_HAVE_RPC=n!g' .config
 sed -e 's!CONFIG_FEATURE_INETD_RPC=y!CONFIG_FEATURE_INETD_RPC=n!g' .config
 %endif
 yes "" | %make oldconfig V=1 KBUILD_SRC=.. -f ../Makefile
-%make CC=%{__cc} LDFLAGS="%{ldflags}" V=1 CONFIG_STATIC=n CONFIG_EXTRA_CFLAGS="%{cflags}" KBUILD_SRC=.. -f ../Makefile
+%make CC=%{__cc} STRIP="%{__strip}" LDFLAGS="%{ldflags}" V=1 CONFIG_STATIC=n CONFIG_EXTRA_CFLAGS="%{cflags}" KBUILD_SRC=.. -f ../Makefile
 popd
 
 %check
