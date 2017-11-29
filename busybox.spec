@@ -1,9 +1,10 @@
 %define Werror_cflags %{nil}
 %define _ssp_cflags %{nil}
+%define	cflags	%{optflags}
 
 Summary:	Multi-call binary combining many common Unix tools into one executable
 Name:		busybox
-Version:	1.25.1
+Version:	1.27.2
 Release:	1
 Epoch:		1
 License:	GPLv2
@@ -19,7 +20,6 @@ Patch12:	busybox-1.2.2-ls.patch
 # ignore -x in stead of returning error
 Patch17:	busybox-1.20.2-pidof-x-argument.patch
 BuildRequires:	pkgconfig(libtirpc)
-%define	cflags	%{optflags}
 BuildRequires:	glibc-static-devel
 
 %description
