@@ -1,9 +1,13 @@
-diff -p -up busybox-1.15.2/arch/i386/Makefile.i586~ busybox-1.15.2/arch/i386/Makefile
---- busybox-1.15.2/arch/i386/Makefile.i586~	2009-09-26 09:14:56.000000000 -0400
-+++ busybox-1.15.2/arch/i386/Makefile	2009-11-29 22:56:44.583601739 -0500
-@@ -4,4 +4,4 @@
+diff --git a/arch/i386/Makefile b/arch/i386/Makefile
+index 425361f..9e8271c 100644
+--- a/arch/i386/Makefile
++++ b/arch/i386/Makefile
+@@ -4,7 +4,7 @@
  
- # -mpreferred-stack-boundary=2 is essential in preventing gcc 4.2.x
- # from aligning stack to 16 bytes. (Which is gcc's way of supporting SSE).
--CFLAGS += $(call cc-option,-march=i386 -mpreferred-stack-boundary=2,)
+ # Allow i486 insns (basically, bswap insn)
+ # Do not try to tune for 486+ (might add padding)
+-CFLAGS += $(call cc-option,-march=i486 -mtune=i386,)
 +CFLAGS += $(call cc-option,-mpreferred-stack-boundary=2,)
+ 
+ ifeq ($(CONFIG_STACK_OPTIMIZATION_386),y)
+ # -mpreferred-stack-boundary=2 is essential in preventing gcc 4.2.x

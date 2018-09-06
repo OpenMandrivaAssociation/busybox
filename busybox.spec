@@ -4,7 +4,7 @@
 
 Summary:	Multi-call binary combining many common Unix tools into one executable
 Name:		busybox
-Version:	1.29.1
+Version:	1.29.2
 Release:	1
 Epoch:		1
 License:	GPLv2
@@ -20,7 +20,7 @@ Patch12:	busybox-1.2.2-ls.patch
 # ignore -x in stead of returning error
 Patch17:	busybox-1.20.2-pidof-x-argument.patch
 BuildRequires:	pkgconfig(libcrypt)
-BuildRequires:	pkgconfig(crypt)
+#BuildRequires:	pkgconfig(crypt)
 BuildRequires:	pkgconfig(libtirpc)
 BuildRequires:	glibc-static-devel
 
