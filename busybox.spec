@@ -20,7 +20,7 @@ Patch12:	busybox-1.2.2-ls.patch
 # ignore -x in stead of returning error
 Patch17:	busybox-1.20.2-pidof-x-argument.patch
 BuildRequires:	pkgconfig(libcrypt)
-BuildRequires:	pkgconfig(crypt)
+BuildRequires:	glibc-static-devel
 BuildRequires:	pkgconfig(libtirpc)
 BuildRequires:	glibc-static-devel
 
