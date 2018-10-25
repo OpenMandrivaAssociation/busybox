@@ -19,10 +19,10 @@ Patch12:	busybox-1.2.2-ls.patch
 # 'pidof -x' from the standard implementation, so let's just make it
 # ignore -x in stead of returning error
 Patch17:	busybox-1.20.2-pidof-x-argument.patch
-BuildRequires:	pkgconfig(libcrypt)
+BuildRequires:	pkgconfig(libxcrypt)
 BuildRequires:	glibc-static-devel
 BuildRequires:	pkgconfig(libtirpc)
-BuildRequires:	glibc-static-devel
+BuildRequires:	libcrypt-static-devel
 
 %description
 BusyBox combines tiny versions of many common UNIX utilities into a
