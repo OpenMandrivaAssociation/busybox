@@ -22,7 +22,7 @@ Patch17:	busybox-1.20.2-pidof-x-argument.patch
 BuildRequires:	pkgconfig(libxcrypt)
 BuildRequires:	glibc-static-devel
 BuildRequires:	pkgconfig(libtirpc)
-BuildRequires:	libcrypt-static-devel
+BuildRequires:	%{_lib}crypt-static-devel
 
 %description
 BusyBox combines tiny versions of many common UNIX utilities into a
