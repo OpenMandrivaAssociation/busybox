@@ -5,7 +5,7 @@
 Summary:	Multi-call binary combining many common Unix tools into one executable
 Name:		busybox
 Version:	1.29.2
-Release:	1
+Release:	2
 Epoch:		1
 License:	GPLv2
 Group:		Shells
