@@ -49,7 +49,7 @@ This package contains a static linked busybox.
 
 %prep
 %setup -q
-%autpatch -p1
+%autopatch -p1
 
 # respect cflags
 %if "%(basename %{__cc})" == "clang"
