@@ -50,7 +50,8 @@ This package contains a static linked busybox.
 %prep
 %setup -q
 %autopatch -p1
-ifnarch %{x86_64}
+
+%ifnarch %{x86_64}
 export CC=gcc
 export CXX=g++
 %global __cc gcc
