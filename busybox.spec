@@ -1,11 +1,11 @@
 %define Werror_cflags %{nil}
 %define _ssp_cflags %{nil}
-%define	cflags	%{optflags}
+%define cflags %{optflags} -Oz
 
 Summary:	Multi-call binary combining many common Unix tools into one executable
 Name:		busybox
 Version:	1.30.1
-Release:	1
+Release:	2
 Epoch:		1
 License:	GPLv2
 Group:		Shells
@@ -48,14 +48,7 @@ Summary:	Static linked busybox
 This package contains a static linked busybox.
 
 %prep
-%setup -q
-%autopatch -p1
-
-%ifnarch %{x86_64}
-export CC=gcc
-export CXX=g++
-%global __cc gcc
-%endif
+%autosetup -p1
 
 # respect cflags
 %if "%(basename %{__cc})" == "clang"
@@ -75,7 +68,7 @@ sed -i \
 
 %build
 mkdir -p full.static
-pushd full.static
+cd full.static
 cp %{SOURCE2} .config
 %ifarch aarch64
 sed -e 's!CONFIG_FEATURE_HAVE_RPC=y!CONFIG_FEATURE_HAVE_RPC=n!g' .config
@@ -83,10 +76,10 @@ sed -e 's!CONFIG_FEATURE_INETD_RPC=y!CONFIG_FEATURE_INETD_RPC=n!g' .config
 %endif
 yes "" | %make oldconfig V=1 KBUILD_SRC=.. -f ../Makefile
 %make_build CC=%{__cc} STRIP="%{__strip}" LDFLAGS="%{ldflags}" V=1 CONFIG_STATIC=y CONFIG_EXTRA_CFLAGS="%{cflags}" KBUILD_SRC=.. -f ../Makefile
-popd
+cd -
 
 mkdir -p full
-pushd full
+cd full
 cp %{SOURCE2} .config
 %ifarch aarch64
 sed -e 's!CONFIG_FEATURE_HAVE_RPC=y!CONFIG_FEATURE_HAVE_RPC=n!g' .config
@@ -94,7 +87,7 @@ sed -e 's!CONFIG_FEATURE_INETD_RPC=y!CONFIG_FEATURE_INETD_RPC=n!g' .config
 %endif
 yes "" | %make oldconfig V=1 KBUILD_SRC=.. -f ../Makefile
 %make_build CC=%{__cc} STRIP="%{__strip}" LDFLAGS="%{ldflags}" V=1 CONFIG_STATIC=n CONFIG_EXTRA_CFLAGS="%{cflags}" KBUILD_SRC=.. -f ../Makefile
-popd
+cd -
 
 %check
 # FIXME
