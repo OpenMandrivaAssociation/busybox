@@ -4,22 +4,21 @@
 
 Summary:	Multi-call binary combining many common Unix tools into one executable
 Name:		busybox
-Version:	1.31.1
+Version:	1.32.0
 Release:	1
 Epoch:		1
 License:	GPLv2
 Group:		Shells
 URL:		http://www.busybox.net/
 Source0:	http://www.busybox.net/downloads/%{name}-%{version}.tar.bz2
-Source2:	busybox-1.23.2-config
-Source3:	busybox-1.18.4-minimal-config
+Source2:	busybox-1.32.0-config
+Source3:	busybox-1.32.0-minimal-config
 Patch1:		busybox-i.15.2-no-march_i386.patch
 Patch12:	busybox-1.2.2-ls.patch
 # the default behaviour of busybox' pidof implementation is same as for
 # 'pidof -x' from the standard implementation, so let's just make it
 # ignore -x in stead of returning error
 Patch17:	busybox-1.20.2-pidof-x-argument.patch
-Patch8:		busybox-1.31.1-glibc-2.31.patch
 BuildRequires:	pkgconfig(libxcrypt)
 BuildRequires:	glibc-static-devel
 BuildRequires:	pkgconfig(libtirpc)
@@ -71,10 +70,6 @@ sed -i \
 mkdir -p full.static
 cd full.static
 cp %{SOURCE2} .config
-%ifarch aarch64
-sed -e 's!CONFIG_FEATURE_HAVE_RPC=y!CONFIG_FEATURE_HAVE_RPC=n!g' .config
-sed -e 's!CONFIG_FEATURE_INETD_RPC=y!CONFIG_FEATURE_INETD_RPC=n!g' .config
-%endif
 yes "" | %make oldconfig V=1 KBUILD_SRC=.. -f ../Makefile
 %make_build CC=%{__cc} STRIP="%{__strip}" LDFLAGS="%{ldflags}" V=1 CONFIG_STATIC=y CONFIG_EXTRA_CFLAGS="%{cflags}" KBUILD_SRC=.. -f ../Makefile
 cd -
@@ -82,10 +77,6 @@ cd -
 mkdir -p full
 cd full
 cp %{SOURCE2} .config
-%ifarch aarch64
-sed -e 's!CONFIG_FEATURE_HAVE_RPC=y!CONFIG_FEATURE_HAVE_RPC=n!g' .config
-sed -e 's!CONFIG_FEATURE_INETD_RPC=y!CONFIG_FEATURE_INETD_RPC=n!g' .config
-%endif
 yes "" | %make oldconfig V=1 KBUILD_SRC=.. -f ../Makefile
 %make_build CC=%{__cc} STRIP="%{__strip}" LDFLAGS="%{ldflags}" V=1 CONFIG_STATIC=n CONFIG_EXTRA_CFLAGS="%{cflags}" KBUILD_SRC=.. -f ../Makefile
 cd -
