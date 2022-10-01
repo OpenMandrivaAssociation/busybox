@@ -4,7 +4,7 @@
 
 Summary:	Multi-call binary combining many common Unix tools into one executable
 Name:		busybox
-Version:	1.32.1
+Version:	1.35.0
 Release:	1
 Epoch:		1
 License:	GPLv2
@@ -70,14 +70,14 @@ sed -i \
 mkdir -p full.static
 cd full.static
 cp %{SOURCE2} .config
-yes "" | %make oldconfig V=1 KBUILD_SRC=.. -f ../Makefile
+make oldconfig V=1 KBUILD_SRC=.. -f ../Makefile
 %make_build CC=%{__cc} STRIP="%{__strip}" LDFLAGS="%{ldflags}" V=1 CONFIG_STATIC=y CONFIG_EXTRA_CFLAGS="%{cflags}" KBUILD_SRC=.. -f ../Makefile
 cd -
 
 mkdir -p full
 cd full
 cp %{SOURCE2} .config
-yes "" | %make oldconfig V=1 KBUILD_SRC=.. -f ../Makefile
+make oldconfig V=1 KBUILD_SRC=.. -f ../Makefile
 %make_build CC=%{__cc} STRIP="%{__strip}" LDFLAGS="%{ldflags}" V=1 CONFIG_STATIC=n CONFIG_EXTRA_CFLAGS="%{cflags}" KBUILD_SRC=.. -f ../Makefile
 cd -
 
