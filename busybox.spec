@@ -9,7 +9,7 @@ Release:	1
 Epoch:		1
 License:	GPLv2
 Group:		Shells
-URL:		http://www.busybox.net/
+URL:		https://www.busybox.net/
 Source0:	http://www.busybox.net/downloads/%{name}-%{version}.tar.bz2
 Source2:	busybox-1.32.0-config
 Source3:	busybox-1.32.0-minimal-config
